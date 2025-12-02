@@ -61,6 +61,7 @@ public:
 int banch();
 int toilet();
 int hall();
+ХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХ
 */
 
 vector <string> descrRooms(20, "");
