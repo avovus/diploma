@@ -61,11 +61,13 @@ public:
 int banch();
 int toilet();
 int hall();
-ХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХХ
 */
 
 vector <string> descrRooms(20, "");
 int currentInd = 0;
+int preInd = currentInd;
+Player player;
+
 
 class Room {
 private:
@@ -73,6 +75,7 @@ private:
     string name = "дефолтная комната";//с помощью вектора индексов близжайших комнат, определяем их имена(name) и выводим
     vector <int> near{};
     string des = "Это пустая комната. В ней ничего нет";
+    vector <string> items{};
 public:
     bool visited = false;
 
@@ -82,52 +85,94 @@ public:
         visited = false;
     }
 
-    Room(int number, string descr, vector <string> items = {}) {
+    Room(int number, string named, string descr, vector <int> nearest = {}, vector <string> mitems = {} ) {
         des = descr;
         ind = number;
+        name = named;
+        items = mitems;
+        visited = false;
     }
 
-    void inspectRoom() {
-        cout << "*вы оглядываете комнату*\n" << endl << des << endl;
-    }
-
-    void getItem() {
-        
-    }
-
-    int event() {
-        int playerAct;
-        if (visited) {
-            cout << "С вашего последнего посещения ничего не изменилось\n" << "1.выйти\n";
+    void search() {
+        if (items.size() == 0) {
+            cout << "вы обыскиваете комнату и ничего не находите\n";
         }
         else {
-            cout << descrRooms[currentInd];
-            switch (currentInd) {
-            case 0://нулевая комната(холл) и т.д.
-                cout << "выберете действие:\n"
-                    "1.обыскать лавочки\n"
-                    "2.пойти в туалет\n"
-                    "3.обыскать комнату охраны\n"
-                    "4.пойти в гардероб\n";
-                cin >> playerAct;
-                switch (playerAct) {
-                case 1:
-
-                return 0;
-
-            default:
-                return 0;
-
+            cout << "вы обыскиваете комнату...\n";
+            for (int i = 0; i < items.size(); ++i) {
+                player.addItem(items[i]);
             }
         }
-        visited = true;
+        items.clear();
+        cout << "вы возвращаетесь на прежнее место... ";
     }
 
+    string getName(){
+        return name;
+    }
+
+    void event() {
+        int playerAct;
+        if (visited) {
+            cout << "С вашего последнего посещения ничего не изменилось\n";
+        }
+        else {
+            visited = true;
+            cout << descrRooms[currentInd];
+        }
+        switch (currentInd) {
+        case 0://нулевая комната(холл) и т.д.
+            cout << "выберете действие:\n"
+                "1.обыскать лавочки\n"
+                "2.пойти в туалет\n"
+                "3.обыскать комнату охраны\n"
+                "4.пойти в гардероб\n";
+            cin >> playerAct;
+            switch (playerAct) {
+            case 1:
+                search();
+                break;
+            case 2:
+                cout << "pokakai\n";
+                break;
+            case 3:
+                currentInd = 1;//охрана
+                break;
+            case 4:
+                currentInd = 2;
+                break;
+            default:
+                cout << "вы ввели неправильную команду, повторите попытку" << endl;
+                break;
+            }
+            break;
+        case 1:
+            cout << "выберете действие:\n"
+                "1.обыскать комнату\n"
+                "2.уйти\n";
+            cin >> playerAct;
+            switch (playerAct) {
+            case 1:
+                search();
+                break;
+            case 2:
+                currentInd = preInd;
+                preInd = currentInd;
+                break;
+            default:
+                cout << "вы ввели неправильную команду, повторите попытку" << endl;
+                break;
+            }
+            break;
+        default:
+            break;
+
+        }
+    }
 };
 
-vector <Room> rooms;
-Player player;
-vector <bool> visited(10, false);
+vector <Room*> rooms;
+//vector <bool> visited(10, false);
 
 void initRooms() {
     descrRooms[0] = "День защиты диплома.Вы не помните, как именно вы добрались сюда,\n"
@@ -167,9 +212,9 @@ void initRooms() {
 
     rooms.clear();
     vector <string> items = { "пицца какая-т", "энергос", "пропуск на нику" };
-    rooms.push_back(Room(0, descrRooms[0], items));
-    rooms.push_back(Room(1, descrRooms[1], items));
-    rooms.push_back(Room(2, descrRooms[2], items));
+    rooms.push_back(new Room(0, "холл", descrRooms[0],{1,2}, items));
+    rooms.push_back(new Room(1, "будка охраны", descrRooms[1]));
+    rooms.push_back(new Room(2, "гардероб", descrRooms[2]));
 }
 
 
@@ -291,8 +336,8 @@ int main(){
     
     */
 
-    while (playerAct != 702){
-        rooms[currentInd].event();
+    while (true){
+        rooms[currentInd]->event();
     }
     
 }
