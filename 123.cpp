@@ -50,17 +50,6 @@ enum GameState {
     STATE_FLOOR1_TOILET_WASH,
     STATE_FLOOR1_TOILET_WASH_CHOICE,
     STATE_FLOOR1_TOILET_LEAVE,
-    STATE_FLOOR1_BENCHES_SEARCH,
-    STATE_FLOOR1_BENCHES_AFTER,
-    STATE_FLOOR1_GUARD_ROOM_ENTER,
-    STATE_FLOOR1_GUARD_ROOM_AFTER,
-    STATE_FLOOR1_CLOAKROOM_ENTER,
-    STATE_FLOOR1_CLOAKROOM_ACTION,
-    STATE_FLOOR1_TOILET_ENTER,
-    STATE_FLOOR1_TOILET_OBSERVE_CHOICE,
-    STATE_FLOOR1_TOILET_OBSERVE_AFTER,
-    STATE_FLOOR1_TOILET_WASH_CHOICES,
-    STATE_FLOOR1_TOILET_WASH_RESULT,
     STATE_FLOOR2_HALL,
     STATE_FLOOR2_RIGHT,
     STATE_FLOOR2_DEPARTMENT,
@@ -183,24 +172,8 @@ private:
     bool requireItemChoice;
     vector<Item> currentItemChoices;
     GameState returnStateAfterItem;
-    bool benchesAllItemsTaken;
-    bool guardRoomItemsTaken;
-    bool cloakroomEntered;
-    bool cloakroomJacketsTaken;
-    bool cloakroomTableTaken;
-    bool toiletEntered;
-    bool toiletObserved;
-    bool toiletPieceTaken;
     
     // Флаги событий
-bool benchesAllItemsTaken;
-    bool guardRoomItemsTaken;
-    bool cloakroomEntered;
-    bool cloakroomJacketsTaken;
-    bool cloakroomTableTaken;
-    bool toiletEntered;
-    bool toiletObserved;
-    bool toiletPieceTaken;
     bool benchesSearched;
     bool guardRoomSearched;
     bool cloakroomVisited;
@@ -235,26 +208,10 @@ public:
         requireItemChoice = false;
         defenseQuestionsStarted = false;
         defenseQuestionNum = 0;
-    benchesAllItemsTaken = false;
-    guardRoomItemsTaken = false;
-    cloakroomEntered = false;
-    cloakroomJacketsTaken = false;
-    cloakroomTableTaken = false;
-    toiletEntered = false;
-    toiletObserved = false;
-    toiletPieceTaken = false;
         resetFlags();
     }
     
     void resetFlags() {
-    benchesAllItemsTaken = false;
-    guardRoomItemsTaken = false;
-    cloakroomEntered = false;
-    cloakroomJacketsTaken = false;
-    cloakroomTableTaken = false;
-    toiletEntered = false;
-    toiletObserved = false;
-    toiletPieceTaken = false;
         benchesSearched = false;
         guardRoomSearched = false;
         cloakroomVisited = false;
@@ -317,294 +274,152 @@ private:
         
         switch(currentState) {
             case STATE_START:
-    cout << "День защиты диплома. Вы не помните, как именно вы добрались сюда...\n";
-    cout << "Теперь вы стоите в холле колледжа на первом этаже.\n";
-    cout << "1. Обыскать лавочки\n";
-    cout << "2. Пойти в комнату охраны\n";
-    cout << "3. Пойти в раздевалку\n";
-    cout << "4. Пойти в туалет\n";
-    cout << "5. Пойти на второй этаж\n";
-    break;
-
-case STATE_FLOOR1_BENCHES_SEARCH:
-    if (!benchesAllItemsTaken) {
-        cout << "Вы шаритесь по лавочкам и находите:\n";
-        cout << "- Банка энергетика\n";
-        cout << "- Журнал вашей группы\n";
-        cout << "- Кусок пиццы пепперони\n"; // ИЛИ чиловой - по сценарию случайно
-        cout << "- Банка Пепси\n";
-        
-        player.addItem(ITEM_ENERGY_DRINK);
-        player.addItem(ITEM_GROUP_MAGAZINE);
-        // По сценарию: ИЛИ кусок пепперони ИЛИ чиловой
-        if (rand() % 2 == 0) {
-            player.addItem(ITEM_PEPPERONI_PIZZA);
-            cout << "(Вы нашли пиццу пепперони)\n";
-        } else {
-            player.addItem(ITEM_CHILLI_PIZZA);
-            cout << "(Вы нашли чиловую пиццу)\n";
-        }
-        player.addItem(ITEM_PEPSI);
-        
-        benchesAllItemsTaken = true;
-        cout << "\nВы забрали все предметы.\n";
-    } else {
-        cout << "Вы уже обыскали лавочки. Больше здесь ничего нет.\n";
-    }
-    cout << "\n1. Вернуться в холл\n";
-    break;
-
-case STATE_FLOOR1_GUARD_ROOM_ENTER:
-    cout << "Вы заходите в небольшую комнатку, где мигает единственная лампочка.\n";
-    cout << "По экрану, на котором обычно видно записи с камер, поползли большие трещины.\n";
-    cout << "На стойке с ключами висит один единственный ключ от аудитории 220.\n";
-    cout << "На столе лежит пропуск на имя Эъпстчхя Иъптаэохяа.\n";
-    cout << "На фотографии лицо девушки искажено в неестественной и жуткой гримасе.\n";
-    cout << "1. Обыскать комнату охраны\n";
-    cout << "2. Уйти\n";
-    break;
-
-case STATE_FLOOR1_GUARD_ROOM_AFTER:
-    if (!guardRoomItemsTaken) {
-        cout << "Вы забираете ключ от 220 и пропуск.\n";
-        player.addItem(ITEM_KEY_220);
-        player.addItem(ITEM_PASS);
-        guardRoomItemsTaken = true;
-    } else {
-        cout << "Вы уже забрали все предметы отсюда.\n";
-    }
-    cout << "\n1. Вернуться\n";
-    break;
-
-case STATE_FLOOR1_CLOAKROOM_ENTER:
-    if (!cloakroomEntered) {
-        cout << "Вы спускаетесь вниз по темной лестнице...\n";
-        cout << "В раздевалке горит слабый желтоватый свет...\n";
-        cout << "Всматриваясь в стены, вы замечаете на обоях черные пятна...\n";
-        cout << "Здесь почти не висит курток, буквально несколько штук.\n";
-        cout << "Также здесь стоит стол с потерянными вещами...\n";
-        cout << "Гардеробщик стоит в задней части возле стены...\n";
-        cout << "Присмотревшись повнимательнее, вы понимаете, что он облизывает эту стену.\n";
-        cloakroomEntered = true;
-    } else {
-        cout << "Вы в раздевалке. Гардеробщик все так же облизывает стену.\n";
-    }
-    cout << "1. Обыскать куртки\n";
-    cout << "2. Обыскать стол\n";
-    cout << "3. Уйти\n";
-    break;
-
-case STATE_FLOOR1_CLOAKROOM_ACTION:
-    // Это состояние используется для обработки выбора 1 или 2 из предыдущего
-    // Обработка в handleInput
-    break;
-
-case STATE_FLOOR1_TOILET_ENTER:
-    if (!toiletEntered) {
-        cout << "Вы идете по коридору первого этажа...\n";
-        cout << "Двери по бокам кажутся странными...\n";
-        cout << "Вы доходите до туалета и входите внутрь.\n";
-        cout << "Сразу слышите оглушающе громкий звук.\n";
-        cout << "Здесь есть раковина, принадлежности для уборки и туалетная бумага отсутствуют.\n";
-        cout << "Возле двери в кабинку стоит студентка. Она со всей силы бьется об неё головой не прекращая.\n";
-        toiletEntered = true;
-    } else {
-        cout << "Вы в туалете. ";
-        if (toiletObserved && !toiletPieceTaken) {
-            cout << "На полу лежит тело студентки.\n";
-        } else if (toiletObserved && toiletPieceTaken) {
-            cout << "На полу лужа крови.\n";
-        } else {
-            cout << "Студентка все еще бьется головой об дверь.\n";
-        }
-    }
-    
-    cout << "1. Смотреть\n";
-    if (player.hasBlackSpots) {
-        cout << "2. Помыть руки\n";
-    }
-    cout << "3. Уйти\n";
-    break;
-
-case STATE_FLOOR1_TOILET_OBSERVE_CHOICE:
-    if (!toiletObserved) {
-        cout << "Вы видите, как девушка у двери с каждым ударом становится все яростнее.\n";
-        cout << "Постепенно, из её головы начинает идти кровь, но её это не останавливает.\n";
-        cout << "Через несколько десятков ударов, в её голове образовывается дыра...\n";
-        cout << "Она опускается сначала на колени, а после и на пол.\n";
-        cout << "1. Забрать кусочек\n";
-        cout << "2. Уйти\n";
-    } else {
-        cout << "На полу лежит тело студентки.\n";
-        if (!toiletPieceTaken) {
-            cout << "1. Забрать кусочек\n";
-        }
-        cout << "2. Уйти\n";
-    }
-    break;
-
-case STATE_FLOOR1_TOILET_WASH_CHOICES:
-    cout << "Из-под крана течет вода с явной примесью ржавчины или чего-то ещё коричнево-красного.\n";
-    cout << "К сожалению, мыла вы тоже не обнаруживаете.\n";
-    cout << "1. Просто помыть руки\n";
-    if (player.hasItem(ITEM_VINEGAR)) cout << "2. Применить уксус\n";
-    if (player.hasItem(ITEM_PEPSI)) cout << "3. Применить пепси\n";
-    if (player.hasItem(ITEM_ENERGY_DRINK)) cout << "4. Применить энергетик\n";
-    cout << "5. Уйти\n";
-    break;
-
-// В методе handleInput() заменить обработку первого этажа на это:
-case STATE_START:
-    switch(choice) {
-        case 1: currentState = STATE_FLOOR1_BENCHES_SEARCH; break;
-        case 2: currentState = STATE_FLOOR1_GUARD_ROOM_ENTER; break;
-        case 3: currentState = STATE_FLOOR1_CLOAKROOM_ENTER; break;
-        case 4: currentState = STATE_FLOOR1_TOILET_ENTER; break;
-        case 5: currentState = STATE_FLOOR2_HALL; break;
-    }
-    break;
-
-case STATE_FLOOR1_BENCHES_SEARCH:
-    if (choice == 1) currentState = STATE_START;
-    break;
-
-case STATE_FLOOR1_GUARD_ROOM_ENTER:
-    switch(choice) {
-        case 1: currentState = STATE_FLOOR1_GUARD_ROOM_AFTER; break;
-        case 2: currentState = STATE_START; break;
-    }
-    break;
-
-case STATE_FLOOR1_GUARD_ROOM_AFTER:
-    if (choice == 1) currentState = STATE_FLOOR1_GUARD_ROOM_ENTER;
-    break;
-
-case STATE_FLOOR1_CLOAKROOM_ENTER:
-    switch(choice) {
-        case 1: // Обыскать куртки
-            if (!cloakroomJacketsTaken) {
-                cout << "Не сводя глаз с гардеробщика, вы обшариваете куртки и находите:\n";
-                cout << "- Банка энергетика\n- Наушники\n- Складной нож\n";
-                player.addItem(ITEM_ENERGY_DRINK);
-                player.addItem(ITEM_HEADPHONES);
-                player.addItem(ITEM_FOLDING_KNIFE);
-                cloakroomJacketsTaken = true;
-                system("pause");
-            } else {
-                cout << "Вы уже обыскали куртки. Больше ничего нет.\n";
-                system("pause");
-            }
-            break;
-        case 2: // Обыскать стол
-            if (!cloakroomTableTaken) {
-                cout << "На столе сидит маленькая игрушка непонятного существа с огромным ртом и глазами.\n";
-                cout << "Рядом стоит бутылка уксуса.\n";
-                cout << "Стоит вам прикоснуться к ним, вы чувствуете легкое жжение в руке.\n";
-                cout << "Вы забираете бутылку уксуса и странные предметы.\n";
-                player.addItem(ITEM_VINEGAR);
-                player.addItem(ITEM_USA_YMZYA);
-                player.addItem(ITEM_OCHUMFAHP);
-                cloakroomTableTaken = true;
-                system("pause");
-            } else {
-                cout << "Стол пуст.\n";
-                system("pause");
-            }
-            break;
-        case 3: // Уйти
-            cout << "Вы выходите из гардероба и поднимаетесь вверх по лестнице.\n";
-            system("pause");
-            currentState = STATE_START;
-            break;
-    }
-    break;
-
-case STATE_FLOOR1_TOILET_ENTER:
-    switch(choice) {
-        case 1: // Смотреть
-            currentState = STATE_FLOOR1_TOILET_OBSERVE_CHOICE;
-            break;
-        case 2: // Помыть руки (только если есть пятна)
-            if (player.hasBlackSpots) {
-                currentState = STATE_FLOOR1_TOILET_WASH_CHOICES;
-            }
-            break;
-        case 3: // Уйти
-            cout << "Вы покидаете туалет и вновь возвращаетесь в холл.\n";
-            system("pause");
-            currentState = STATE_START;
-            break;
-    }
-    break;
-
-case STATE_FLOOR1_TOILET_OBSERVE_CHOICE:
-    if (!toiletObserved || !toiletPieceTaken) {
-        switch(choice) {
-            case 1: // Забрать кусочек
-                if (!toiletPieceTaken) {
-                    player.addItem(ITEM_PIECE);
-                    toiletPieceTaken = true;
-                    toiletObserved = true;
-                    cout << "Вы забираете кусочек плоти.\n";
+                cout << "День защиты диплома. Вы не помните, как именно вы добрались сюда...\n";
+                cout << "Теперь вы стоите в холле колледжа на первом этаже.\n";
+                cout << "1. Обыскать лавочки\n";
+                cout << "2. Пойти в комнату охраны\n";
+                cout << "3. Пойти в раздевалку\n";
+                cout << "4. Пойти в туалет\n";
+                cout << "5. Пойти на второй этаж\n";
+                break;
+                
+            case STATE_FLOOR1_BENCHES:
+                if (!benchesSearched) {
+                    cout << "Вы шаритесь по лавочкам и находите:\n";
+                    // Случайный предмет как в сценарии
+                    vector<Item> possibleItems = {ITEM_ENERGY_DRINK, ITEM_GROUP_MAGAZINE, ITEM_PEPSI};
+                    if (rand() % 2 == 0) {
+                        possibleItems.push_back(ITEM_PEPPERONI_PIZZA);
+                    } else {
+                        possibleItems.push_back(ITEM_CHILLI_PIZZA);
+                    }
+                    
+                    Item found = possibleItems[rand() % possibleItems.size()];
+                    player.addItem(found);
+                    cout << "- " << getItemName(found) << "\n";
+                    benchesSearched = true;
+                } else {
+                    cout << "Вы уже обыскали лавочки. Больше здесь ничего нет.\n";
                 }
-                currentState = STATE_FLOOR1_TOILET_ENTER;
+                cout << "\n1. Вернуться в холл\n";
                 break;
-            case 2: // Уйти
-                if (!toiletObserved) toiletObserved = true;
-                currentState = STATE_FLOOR1_TOILET_ENTER;
+                
+            case STATE_FLOOR1_GUARD_ROOM:
+                cout << "Вы заходите в небольшую комнатку, где мигает единственная лампочка.\n";
+                cout << "По экрану с камерами поползли большие трещины.\n";
+                cout << "На стойке с ключами висит один единственный ключ от аудитории 220.\n";
+                cout << "На столе лежит пропуск на имя Эъпстчхя Иъптаэохяа.\n";
+                cout << "1. Обыскать комнату охраны\n";
+                cout << "2. Уйти\n";
                 break;
-        }
-    } else {
-        if (choice == 1 || choice == 2) {
-            currentState = STATE_FLOOR1_TOILET_ENTER;
-        }
-    }
-    break;
-
-case STATE_FLOOR1_TOILET_WASH_CHOICES:
-    switch(choice) {
-        case 1: // Просто помыть руки
-            cout << "Вы засовываете руки под поток воды и жжение усиливается.\n";
-            cout << "Тщательно промыв руки, вы выключаете воду и замечаете...\n";
-            cout << "Теперь ваши руки уже по плечи покрыты черными пятнами. [-1 жизнь]\n";
-            player.addBlackSpots();
-            player.takeDamage();
-            currentState = STATE_FLOOR1_TOILET_ENTER;
-            break;
-        case 2: // Применить уксус
-            if (player.hasItem(ITEM_VINEGAR)) {
-                cout << "Вы моете руки в уксусе и, на удивление, черные пятна пропадают с кожи.\n";
-                player.removeItem(ITEM_VINEGAR);
-                player.removeBlackSpots();
-                currentState = STATE_FLOOR1_TOILET_ENTER;
-            }
-            break;
-        case 3: // Применить пепси
-            if (player.hasItem(ITEM_PEPSI)) {
-                cout << "Вы засовываете руки под сладкого напитка и жжение усиливается.\n";
-                cout << "Тщательно промыв руки, вы замечаете, что теперь ваши руки уже по плечи покрыты черными пятнами. [-1 жизнь]\n";
-                player.removeItem(ITEM_PEPSI);
-                player.addBlackSpots();
-                player.takeDamage();
-                currentState = STATE_FLOOR1_TOILET_ENTER;
-            }
-            break;
-        case 4: // Применить энергетик
-            if (player.hasItem(ITEM_ENERGY_DRINK)) {
-                cout << "Вы засовываете руки под сладкого напитка и жжение усиливается.\n";
-                cout << "Тщательно промыв руки, вы замечаете, что теперь ваши руки уже по плечи покрыты черными пятнами. [-1 жизнь]\n";
-                player.removeItem(ITEM_ENERGY_DRINK);
-                player.addBlackSpots();
-                player.takeDamage();
-                currentState = STATE_FLOOR1_TOILET_ENTER;
-            }
-            break;
-        case 5: // Уйти
-            currentState = STATE_FLOOR1_TOILET_ENTER;
-            break;
-    }
-    system("pause");
-    break;
+                
+            case STATE_FLOOR1_GUARD_ROOM_SEARCH:
+                if (!guardRoomSearched) {
+                    player.addItem(ITEM_KEY_220);
+                    player.addItem(ITEM_PASS);
+                    cout << "Вы забираете ключ от 220 и пропуск.\n";
+                    guardRoomSearched = true;
+                } else {
+                    cout << "Вы уже все забрали отсюда.\n";
+                }
+                cout << "\n1. Вернуться\n";
+                break;
+                
+            case STATE_FLOOR1_CLOAKROOM:
+                if (!cloakroomVisited) {
+                    cout << "Вы спускаетесь вниз по темной лестнице...\n";
+                    cout << "В раздевалке горит слабый желтоватый свет.\n";
+                    cout << "На обоях черные пятна почти повсюду.\n";
+                    cout << "Гардеробщик стоит боком и смотрит за каждым вашим движением одним глазом.\n";
+                    cout << "Вы понимаете, что он облизывает стену.\n";
+                    cloakroomVisited = true;
+                } else {
+                    cout << "Вы в раздевалке. Гардеробщик все так же облизывает стену.\n";
+                }
+                cout << "1. Обыскать куртки\n";
+                cout << "2. Обыскать стол\n";
+                cout << "3. Уйти\n";
+                break;
+                
+            case STATE_FLOOR1_CLOAKROOM_JACKETS:
+                if (!cloakroomJacketsSearched) {
+                    cout << "Не сводя глаз с гардеробщика, вы обшариваете куртки и находите:\n";
+                    player.addItem(ITEM_ENERGY_DRINK);
+                    player.addItem(ITEM_HEADPHONES);
+                    player.addItem(ITEM_FOLDING_KNIFE);
+                    cout << "- Банка энергетика\n- Наушники\n- Складной нож\n";
+                    cloakroomJacketsSearched = true;
+                } else {
+                    cout << "Вы уже обыскали куртки. Больше ничего нет.\n";
+                }
+                cout << "\n1. Вернуться\n";
+                break;
+                
+            case STATE_FLOOR1_CLOAKROOM_TABLE:
+                if (!cloakroomTableSearched) {
+                    cout << "На столе сидит маленькая игрушка непонятного существа.\n";
+                    cout << "Рядом стоит бутылка уксуса.\n";
+                    cout << "При касании вы чувствуете легкое жжение в руке.\n";
+                    player.addItem(ITEM_VINEGAR);
+                    player.addItem(ITEM_USA_YMZYA);
+                    player.addItem(ITEM_OCHUMFAHP);
+                    cout << "Вы забираете бутылку уксуса и странные предметы.\n";
+                    cloakroomTableSearched = true;
+                } else {
+                    cout << "Стол пуст.\n";
+                }
+                cout << "\n1. Вернуться\n";
+                break;
+                
+            case STATE_FLOOR1_TOILET:
+                cout << "Вы идете по коридору первого этажа...\n";
+                cout << "Доходите до туалета и входите внутрь.\n";
+                cout << "Слышите оглушающе громкий звук.\n";
+                cout << "Возле двери в кабинку стоит студентка. Она бьется головой об дверь.\n";
+                cout << "1. Смотреть\n";
+                if (player.hasBlackSpots) {
+                    cout << "2. Помыть руки\n";
+                }
+                cout << "3. Уйти\n";
+                break;
+                
+            case STATE_FLOOR1_TOILET_OBSERVE:
+                if (!toiletGirlObserved) {
+                    cout << "Вы видите, как девушка с каждым ударом становится все яростнее...\n";
+                    cout << "Из её головы начинает идти кровь...\n";
+                    cout << "Через несколько десятков ударов, она опускается на пол.\n";
+                    cout << "1. Забрать кусочек\n";
+                    cout << "2. Уйти\n";
+                } else {
+                    cout << "На полу лишь лужа крови.\n";
+                    cout << "\n1. Вернуться\n";
+                }
+                break;
+                
+            case STATE_FLOOR1_TOILET_WASH:
+                cout << "Из-под крана течет вода с явной примесью ржавчины.\n";
+                cout << "Мыла вы не обнаруживаете.\n";
+                cout << "1. Просто помыть руки\n";
+                if (player.hasItem(ITEM_VINEGAR)) cout << "2. Применить уксус\n";
+                if (player.hasItem(ITEM_PEPSI)) cout << "3. Применить пепси\n";
+                if (player.hasItem(ITEM_ENERGY_DRINK)) cout << "4. Применить энергетик\n";
+                cout << "5. Уйти\n";
+                break;
+                
+            case STATE_FLOOR1_TOILET_WASH_CHOICE:
+                // Обрабатывается в handleInput
+                break;
+                
+            case STATE_FLOOR1_TOILET_LEAVE:
+                if (player.hasBlackSpots && !player.hasItem(ITEM_VINEGAR)) {
+                    cout << "Вы решаете не контактировать с водой, но жжение усиливается!\n";
+                    cout << "Теперь все ваше тело покрыто черными пятнами.\n";
+                    cout << "Ваше сознание затуманивается...\n";
+                    cout << "Вы выходите из туалета и идете исполнять своё предназначение на благо роя.\n";
+                    currentState = STATE_BAD_END_ROY;
+                    return;
+                }
+                break;
                 
             case STATE_FLOOR2_HALL:
                 cout << "На втором этаже в холле все перевернуто вверх дном.\n";
@@ -1629,7 +1444,7 @@ int main() {
     
     Game game;
     game.run();
-     
+    
     cout << "\nСпасибо за игру!\n";
     return 0;
 }
